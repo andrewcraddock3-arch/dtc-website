@@ -253,7 +253,7 @@ iframe.trols{width:100%;height:520px;min-height:0;border:0;border-radius:0;displ
   <article class="card rv"><div class="ico">📅</div><h3>How do I book?</h3><ul>
    <li>Book online, then use your <b>PIN at the gate</b></li><li>Members book <b>4 days</b> ahead, public <b>3 days</b></li><li>New days open at <b>noon</b></li></ul></article>
   <article class="card rv"><div class="ico">💳</div><h3>Court hire fees <small style="color:var(--m);font-weight:500">per 30 min</small></h3>
-   <table><thead><tr><th></th><th>Day</th><th>Night</th></tr></thead><tbody>
+   <table><thead><tr><th></th><th>Day</th><th>Night</th></tr></thead><tbody id="hire-fees">
    <tr><td>Members</td><td class="p">Free</td><td class="p">$2.75</td></tr>
    <tr><td>Public</td><td class="p">$9.90</td><td class="p">$15.60</td></tr>
    <tr><td>Guests</td><td class="p">$3</td><td class="p">$6</td></tr></tbody></table></article>
@@ -435,6 +435,12 @@ t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('ari
  if(sp&&sp.querySelector('.yr'))load('Senior Club Champs','dtcSeniors',function(rs){rs=rs.filter(function(c){return cell(c[0])&&cell(c[1])});if(!rs.length)return;var h='';
   group(rs,function(c){return cell(c[0])}).forEach(function(y){h+='<div class="yr"><h2 class="yh">Club Championships '+esc(y[0])+' results</h2>'+table(['Event','Winner(s)','Runner(s)-up'],y[1].map(function(c){return [cell(c[1]),cell(c[2]),cell(c[3])]}),'rt st')+'</div>'});
   [].forEach.call(sp.querySelectorAll(':scope > .yr'),function(e){e.remove()});sp.insertAdjacentHTML('beforeend',h)});
+ // Court Hire: Order | Show | Who | Day | Night
+ var hf=document.getElementById('hire-fees');
+ if(hf)load('Court Hire','dtcHire',function(rs){
+  var L=rs.map(function(c,i){return {c:c,i:i,o:parseFloat(cell(c[0]))}}).filter(function(x){return yes(cell(x.c[1]))&&cell(x.c[2])});if(!L.length)return;
+  L.sort(function(a,b){var ao=isNaN(a.o)?1e9:a.o,bo=isNaN(b.o)?1e9:b.o;return ao-bo||a.i-b.i});
+  hf.innerHTML=L.map(function(x){var c=x.c;return '\n   <tr><td>'+esc(cell(c[2]))+'</td><td class="p">'+esc(cell(c[3])||'–')+'</td><td class="p">'+esc(cell(c[4])||'–')+'</td></tr>'}).join('')});
  // Honour Board: Year | Men's Singles | Ladies' Singles
  var hb=document.querySelector('#honour-board table.hbt tbody');
  if(hb)load('Honour Board','dtcHonour',function(rs){rs=rs.filter(function(c){return cell(c[0])});if(!rs.length)return;
