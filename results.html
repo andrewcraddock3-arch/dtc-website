@@ -316,29 +316,72 @@ t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('ari
 </script>
 <script>
 (function(){
- var ID='1VqoOP7ec88J1Rl-DN7PtynWBuAoA3McwAMSIjn8o-FA';
- var b=document.getElementById('banner');if(!b)return;
- function cell(c){if(!c)return '';if(c.f!=null)return String(c.f);return c.v==null?'':String(c.v)}
+ var ID='1VqoOP7ec88J1Rl-DN7PtynWBuAoA3McwAMSIjn8o-FA',T=Math.floor(Date.now()/300000);
+ function cell(c){if(!c)return '';if(c.f!=null)return String(c.f).trim();return c.v==null?'':String(c.v).trim()}
  function day(c){if(!c||c.v==null||c.v==='')return null;var v=c.v;
-  if(typeof v==='string'){var m=v.match(/^Date\((\d+),(\d+),(\d+)/);if(m)return new Date(+m[1],+m[2],+m[3]);
-   m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);}
+  if(typeof v==='string'){var m=v.match(/^Date\((\d+),(\d+),(\d+)/);if(m)return new Date(+m[1],+m[2],+m[3]);}
   var s=cell(c).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);return s?new Date(+s[3],+s[2]-1,+s[1]):null}
- function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
- window.google=window.google||{};google.visualization=google.visualization||{};google.visualization.Query=google.visualization.Query||{};
- google.visualization.Query.setResponse=function(r){try{
-  var rows=(r.table&&r.table.rows)||[],now=new Date();now.setHours(0,0,0,0);
-  for(var i=0;i<rows.length;i++){var c=rows[i].c||[];
-   if(cell(c[0]).trim().toLowerCase()!=='yes')continue;
-   var msg=cell(c[1]).trim();if(!msg)continue;
+ function esc(t){return String(t).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[ch]})}
+ function safe(u){return /^(https?:|mailto:|tel:)/i.test(u)?u:''}
+ function today(){var n=new Date();n.setHours(0,0,0,0);return n}
+ function yes(s){return s.toLowerCase()!=='no'}
+ function rows(r){var out=[],rs=(r&&r.table&&r.table.rows)||[];for(var i=0;i<rs.length;i++){var c=rs[i].c||[],any=false;for(var j=0;j<c.length;j++)if(cell(c[j]))any=true;if(any)out.push(c)}return out}
+ function load(tab,cb,fn){window[cb]=function(r){try{if(r&&r.status==='error')return;var rs=rows(r);if(rs.length)fn(rs)}catch(e){}};
+  var s=document.createElement('script');s.src='https://docs.google.com/spreadsheets/d/'+ID+'/gviz/tq?tqx=out:json;responseHandler:'+cb+'&sheet='+encodeURIComponent(tab)+'&headers=1&t='+T;
+  s.onerror=function(){};document.head.appendChild(s)}
+ function reveal(root){[].forEach.call(root.querySelectorAll('.rv'),function(el){if(typeof io!=='undefined'&&io.observe)io.observe(el);else el.classList.add('in')})}
+ function group(rs,key){var o=[],m={};rs.forEach(function(c){var k=key(c);if(!(k in m)){m[k]=[];o.push(k)}m[k].push(c)});return o.map(function(k){return [k,m[k]]})}
+ function table(cols,rs,cls){var h='<div class="tw"><table class="'+cls+'"><thead><tr>'+cols.map(function(c){return '<th>'+c+'</th>'}).join('')+'</tr></thead><tbody>';
+  rs.forEach(function(r){h+='<tr>'+r.map(function(x,i){return '<td'+(i===0?' class=ev-n':i===1?' class=w':'')+'>'+(x?esc(x):'–')+'</td>'}).join('')+'</tr>'});return h+'</tbody></table></div>'}
+ // Banner: Show | Message | Link text | Link URL | Start | End | NEW tag
+ var b=document.getElementById('banner');
+ if(b)load('Banner','dtcBanner',function(rs){var now=today();
+  for(var i=0;i<rs.length;i++){var c=rs[i];if(cell(c[0]).toLowerCase()!=='yes')continue;var msg=cell(c[1]);if(!msg)continue;
    var st=day(c[4]),en=day(c[5]);if(st&&now<st)continue;if(en&&now>=en)continue;
-   var p=b.querySelector('p'),h='';
-   if(cell(c[6]).trim().toLowerCase()!=='no')h+='<span class="bnew">NEW</span> ';
-   h+=esc(msg);var lt=cell(c[2]).trim(),lu=cell(c[3]).trim();
+   var p=b.querySelector('p'),h='';if(cell(c[6]).toLowerCase()!=='no')h+='<span class="bnew">NEW</span> ';
+   h+=esc(msg);var lt=cell(c[2]),lu=cell(c[3]);
    if(lu&&/^https?:\/\//i.test(lu))h+=' <a class="bmore" href="'+esc(lu)+'" target="_blank" rel="noopener">'+esc(lt||'Details →')+'</a>';
    p.innerHTML=h;b.hidden=false;return}
-  b.hidden=true}catch(e){}};
- var s=document.createElement('script');s.src='https://docs.google.com/spreadsheets/d/'+ID+'/gviz/tq?tqx=out:json&sheet=Banner&headers=1&t='+Math.floor(Date.now()/300000);
- s.onerror=function(){};document.head.appendChild(s);
+  b.hidden=true});
+ // Contacts: Order | Show | Row | Role | Name | Phone | Email | Website
+ var cg=document.querySelectorAll('#contacts .cgrid');
+ if(cg.length===2)load('Contacts','dtcContacts',function(rs){
+  var L=rs.map(function(c,i){return {c:c,i:i,o:parseFloat(cell(c[0]))}}).filter(function(x){return yes(cell(x.c[1]))&&(cell(x.c[3])||cell(x.c[4]))});
+  if(!L.length)return;
+  L.sort(function(a,b){var ao=isNaN(a.o)?1e9:a.o,bo=isNaN(b.o)?1e9:b.o;return ao-bo||a.i-b.i});
+  var h=['',''];L.forEach(function(x){var c=x.c,t='<div class="cc"><span class="cr">'+esc(cell(c[3]))+'</span><b>'+esc(cell(c[4]))+'</b>';
+   var ph=cell(c[5]),d=ph.replace(/[^\d+]/g,'');if(d){if(d.charAt(0)==='0')d='+61'+d.slice(1);t+='<a href="'+esc(safe('tel:'+d))+'">'+esc(ph)+'</a>'}
+   var em=cell(c[6]);if(/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(em))t+='<a href="'+esc('mailto:'+em)+'">'+esc(em)+'</a>';
+   var w=cell(c[7]);if(w&&!/^[a-z]+:/i.test(w))w='https://'+w;if(w&&/^https?:\/\//i.test(w))t+='<a href="'+esc(w)+'" target="_blank" rel="noopener">'+esc(w.replace(/^https?:\/\/(www\.)?/i,'').replace(/\/$/,''))+'</a>';
+   h[cell(c[2])==='1'?0:1]+=t+'</div>'});
+  cg[0].innerHTML=h[0];cg[1].innerHTML=h[1];cg[0].hidden=!h[0];cg[1].hidden=!h[1]});
+ // Events: Show | Date | Badge top | Badge bottom | Title | Details
+ var evh=document.querySelector('#events .two > div');
+ if(evh&&evh.querySelector('.ev'))load('Events','dtcEvents',function(rs){var now=today(),M='Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' '),h='';
+  rs.forEach(function(c){if(!yes(cell(c[0]))||!cell(c[4]))return;var d=day(c[1]);if(d&&d<now)return;
+   var bt=cell(c[2])||(d?M[d.getMonth()]:''),bb=cell(c[3])||(d?String(d.getDate()):'');
+   h+='<div class="ev rv"><div class="date"><span><small>'+esc(bt)+'</small>'+esc(bb)+'</span></div><div><h3>'+esc(cell(c[4]))+'</h3>'+(cell(c[5])?'<p>'+esc(cell(c[5]))+'</p>':'')+'</div></div>'});
+  [].forEach.call(evh.querySelectorAll('.ev'),function(e){e.remove()});evh.insertAdjacentHTML('beforeend',h);reveal(evh)});
+ // Junior Club Champs: Year | Group | Event | Winner | Defeated | Score
+ var jp=document.getElementById('juniors');
+ if(jp&&jp.querySelector('.yr'))load('Junior Club Champs','dtcJuniors',function(rs){rs=rs.filter(function(c){return cell(c[0])&&cell(c[2])});if(!rs.length)return;
+  var G=group(rs,function(c){return cell(c[0])}),ch='',h='';
+  G.forEach(function(y){var id=esc(y[0].replace(/[^\w-]/g,''));ch+='<a class="chip" href="#jr-'+id+'">'+esc(y[0])+'</a>';
+   h+='<div class="yr" id="jr-'+id+'"><h2 class="yh">Junior Club Championship '+esc(y[0])+' results</h2>';
+   group(y[1],function(c){return cell(c[1])}).forEach(function(g){h+='<h3 class="gh">'+esc(g[0].toUpperCase())+'</h3>'+table(['Event','Winner','Defeated','Score'],g[1].map(function(c){return [cell(c[2]),cell(c[3]),cell(c[4]),cell(c[5])]}),'rt st jt')});
+   h+='</div>'});
+  var chips=jp.querySelector('.chips');if(chips)chips.innerHTML=ch;
+  [].forEach.call(jp.querySelectorAll(':scope > .yr'),function(e){e.remove()});jp.insertAdjacentHTML('beforeend',h)});
+ // Senior Club Champs: Year | Event | Winner(s) | Runner(s)-up
+ var sp=document.getElementById('seniors');
+ if(sp&&sp.querySelector('.yr'))load('Senior Club Champs','dtcSeniors',function(rs){rs=rs.filter(function(c){return cell(c[0])&&cell(c[1])});if(!rs.length)return;var h='';
+  group(rs,function(c){return cell(c[0])}).forEach(function(y){h+='<div class="yr"><h2 class="yh">Club Championships '+esc(y[0])+' results</h2>'+table(['Event','Winner(s)','Runner(s)-up'],y[1].map(function(c){return [cell(c[1]),cell(c[2]),cell(c[3])]}),'rt st')+'</div>'});
+  [].forEach.call(sp.querySelectorAll(':scope > .yr'),function(e){e.remove()});sp.insertAdjacentHTML('beforeend',h)});
+ // Honour Board: Year | Men's Singles | Ladies' Singles
+ var hb=document.querySelector('#honour-board table.hbt tbody');
+ if(hb)load('Honour Board','dtcHonour',function(rs){rs=rs.filter(function(c){return cell(c[0])});if(!rs.length)return;
+  function v(s){return !s||s==='-'||s==='–'?'–':esc(s)}
+  hb.innerHTML=rs.map(function(c){return '<tr><td>'+v(cell(c[1]))+'</td><th scope="row" class="yr">'+esc(cell(c[0]))+'</th><td>'+v(cell(c[2]))+'</td></tr>'}).join('')});
 })();
 </script>
 <script>
