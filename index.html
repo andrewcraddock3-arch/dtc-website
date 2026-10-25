@@ -372,4 +372,31 @@ var cur=document.documentElement.dataset.theme||'';b.forEach(function(x){x.setAt
 (function(){var t=document.querySelector('.tbtn'),p=document.querySelector('.tpop');if(!t)return;function c(){p.hidden=true;t.setAttribute('aria-expanded','false')}
 t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('aria-expanded',!p.hidden)};p.onclick=function(e){if(e.target.dataset&&'t' in e.target.dataset)c()};document.addEventListener('click',function(e){if(!p.contains(e.target))c()});document.addEventListener('keydown',function(e){if(e.key==='Escape')c()})})();
 </script>
+<script>
+(function(){
+ var ID='1VqoOP7ec88J1Rl-DN7PtynWBuAoA3McwAMSIjn8o-FA';
+ var b=document.getElementById('banner');if(!b)return;
+ function cell(c){if(!c)return '';if(c.f!=null)return String(c.f);return c.v==null?'':String(c.v)}
+ function day(c){if(!c||c.v==null||c.v==='')return null;var v=c.v;
+  if(typeof v==='string'){var m=v.match(/^Date\((\d+),(\d+),(\d+)/);if(m)return new Date(+m[1],+m[2],+m[3]);
+   m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);}
+  var s=cell(c).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);return s?new Date(+s[3],+s[2]-1,+s[1]):null}
+ function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+ window.google=window.google||{};google.visualization=google.visualization||{};google.visualization.Query=google.visualization.Query||{};
+ google.visualization.Query.setResponse=function(r){try{
+  var rows=(r.table&&r.table.rows)||[],now=new Date();now.setHours(0,0,0,0);
+  for(var i=0;i<rows.length;i++){var c=rows[i].c||[];
+   if(cell(c[0]).trim().toLowerCase()!=='yes')continue;
+   var msg=cell(c[1]).trim();if(!msg)continue;
+   var st=day(c[4]),en=day(c[5]);if(st&&now<st)continue;if(en&&now>=en)continue;
+   var p=b.querySelector('p'),h='';
+   if(cell(c[6]).trim().toLowerCase()!=='no')h+='<span class="bnew">NEW</span> ';
+   h+=esc(msg);var lt=cell(c[2]).trim(),lu=cell(c[3]).trim();
+   if(lu&&/^https?:\/\//i.test(lu))h+=' <a class="bmore" href="'+esc(lu)+'" target="_blank" rel="noopener">'+esc(lt||'Details →')+'</a>';
+   p.innerHTML=h;b.hidden=false;return}
+  b.hidden=true}catch(e){}};
+ var s=document.createElement('script');s.src='https://docs.google.com/spreadsheets/d/'+ID+'/gviz/tq?tqx=out:json&sheet=Banner&headers=1&t='+Math.floor(Date.now()/300000);
+ s.onerror=function(){};document.head.appendChild(s);
+})();
+</script>
 </body></html>
