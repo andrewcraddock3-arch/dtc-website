@@ -264,11 +264,11 @@ iframe.trols{width:100%;height:520px;min-height:0;border:0;border-radius:0;displ
 <section class="band" id="play"><div class="wrap">
  <div class="sh rv"><div><span class="kicker">Ways to play</span><h2>Social, competitive or just starting out</h2><p class="sub">Winter season runs April–August, summer October–March.</p></div></div>
  <div class="ways">
-  <article class="way rv"><img src="d11.jpg" alt="Illustration of kids playing on a clay court" loading="lazy"><div class="b"><h3>Social tennis</h3><p>Friendly hit-ups for members on <b>Monday, Wednesday and Thursday mornings</b>. A great way to meet people.</p><a class="btn btn-og" href="#contact">Ask about social tennis</a></div></article>
-  <article class="way rv"><img src="d4.jpg" alt="Illustration of a player hitting a backhand" loading="lazy"><div class="b"><h3>Competition</h3>
+  <article class="way rv"><img data-photo="Social" src="d11.jpg" alt="Illustration of kids playing on a clay court" loading="lazy"><div class="b"><h3>Social tennis</h3><p>Friendly hit-ups for members on <b>Monday, Wednesday and Thursday mornings</b>. A great way to meet people.</p><a class="btn btn-og" href="#contact">Ask about social tennis</a></div></article>
+  <article class="way rv"><img data-photo="Competition" src="d4.jpg" alt="Illustration of a player hitting a backhand" loading="lazy"><div class="b"><h3>Competition</h3>
    <div><span class="tag">Junior</span><span class="tag">Open · ERT & Waverley</span><span class="tag">Night · Mon–Thu</span><span class="tag">Midweek ladies · Tue–Thu</span></div>
    <p>Night tennis runs through Blackburn &amp; District. Teams in winter (Apr–Aug) and summer (Oct–Mar).</p><a class="btn btn-og" href="#contacts">Join a team</a></div></article>
-  <article class="way rv" id="coaching"><img src="d17.jpg" alt="Illustration of a coach with a young player" loading="lazy"><div class="b"><h3>Coaching</h3><p>Daily coaching by <b>Slamin Tennis &amp; Fitness</b>, for juniors and adults. <b>New adult members get a free group lesson.</b></p><p>📞 <a href="tel:0489931075">0489 931 075</a></p><a class="btn btn-og" href="https://www.slamin.com.au/" target="_blank" rel="noopener">Visit Slamin Tennis →</a></div></article>
+  <article class="way rv" id="coaching"><img data-photo="Coaching" src="d17.jpg" alt="Illustration of a coach with a young player" loading="lazy"><div class="b"><h3>Coaching</h3><p>Daily coaching by <b>Slamin Tennis &amp; Fitness</b>, for juniors and adults. <b>New adult members get a free group lesson.</b></p><p>📞 <a href="tel:0489931075">0489 931 075</a></p><a class="btn btn-og" href="https://www.slamin.com.au/" target="_blank" rel="noopener">Visit Slamin Tennis →</a></div></article>
  </div>
 </div></section>
 
@@ -441,6 +441,15 @@ t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('ari
   var L=rs.map(function(c,i){return {c:c,i:i,o:parseFloat(cell(c[0]))}}).filter(function(x){return yes(cell(x.c[1]))&&cell(x.c[2])});if(!L.length)return;
   L.sort(function(a,b){var ao=isNaN(a.o)?1e9:a.o,bo=isNaN(b.o)?1e9:b.o;return ao-bo||a.i-b.i});
   hf.innerHTML=L.map(function(x){var c=x.c;return '\n   <tr><td>'+esc(cell(c[2]))+'</td><td class="p">'+esc(cell(c[3])||'–')+'</td><td class="p">'+esc(cell(c[4])||'–')+'</td></tr>'}).join('')});
+ // Photos: Show | Category | Photo link | Description  (random Show=Yes photo per category)
+ if(document.querySelector('img[data-photo]'))load('Photos','dtcPhotos',function(rs){var by={};
+  function url(u){var m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([\w-]{10,})/)||u.match(/drive\.google\.com\/[^#]*[?&]id=([\w-]{10,})/);
+   if(m)return ['https://lh3.googleusercontent.com/d/'+m[1]+'=w1600','https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1600'];return /^https:\/\/[^\s"'<>]+$/i.test(u)?[u]:[]}
+  rs.forEach(function(c){var k=cell(c[1]).toLowerCase();if(cell(c[0]).toLowerCase()!=='yes'||!k)return;var u=url(cell(c[2]));if(u.length)(by[k]=by[k]||[]).push({u:u,a:cell(c[3])})});
+  [].forEach.call(document.querySelectorAll('img[data-photo]'),function(img){var L=by[img.getAttribute('data-photo').toLowerCase()];if(!L||!L.length)return;
+   var pick=L[Math.floor(Math.random()*L.length)],i=0;
+   (function tryNext(){if(i>=pick.u.length)return;var src=pick.u[i++],pre=new Image();
+    pre.onload=function(){if(pre.naturalWidth>1){img.src=src;img.removeAttribute('srcset');if(pick.a)img.alt=pick.a}else tryNext()};pre.onerror=tryNext;pre.src=src})()})});
  // Honour Board: Year | Men's Singles | Ladies' Singles
  var hb=document.querySelector('#honour-board table.hbt tbody');
  if(hb)load('Honour Board','dtcHonour',function(rs){rs=rs.filter(function(c){return cell(c[0])});if(!rs.length)return;

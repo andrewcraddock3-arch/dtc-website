@@ -383,6 +383,15 @@ t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('ari
   var L=rs.map(function(c,i){return {c:c,i:i,o:parseFloat(cell(c[0]))}}).filter(function(x){return yes(cell(x.c[1]))&&cell(x.c[2])});if(!L.length)return;
   L.sort(function(a,b){var ao=isNaN(a.o)?1e9:a.o,bo=isNaN(b.o)?1e9:b.o;return ao-bo||a.i-b.i});
   hf.innerHTML=L.map(function(x){var c=x.c;return '\n   <tr><td>'+esc(cell(c[2]))+'</td><td class="p">'+esc(cell(c[3])||'–')+'</td><td class="p">'+esc(cell(c[4])||'–')+'</td></tr>'}).join('')});
+ // Photos: Show | Category | Photo link | Description  (random Show=Yes photo per category)
+ if(document.querySelector('img[data-photo]'))load('Photos','dtcPhotos',function(rs){var by={};
+  function url(u){var m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([\w-]{10,})/)||u.match(/drive\.google\.com\/[^#]*[?&]id=([\w-]{10,})/);
+   if(m)return ['https://lh3.googleusercontent.com/d/'+m[1]+'=w1600','https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1600'];return /^https:\/\/[^\s"'<>]+$/i.test(u)?[u]:[]}
+  rs.forEach(function(c){var k=cell(c[1]).toLowerCase();if(cell(c[0]).toLowerCase()!=='yes'||!k)return;var u=url(cell(c[2]));if(u.length)(by[k]=by[k]||[]).push({u:u,a:cell(c[3])})});
+  [].forEach.call(document.querySelectorAll('img[data-photo]'),function(img){var L=by[img.getAttribute('data-photo').toLowerCase()];if(!L||!L.length)return;
+   var pick=L[Math.floor(Math.random()*L.length)],i=0;
+   (function tryNext(){if(i>=pick.u.length)return;var src=pick.u[i++],pre=new Image();
+    pre.onload=function(){if(pre.naturalWidth>1){img.src=src;img.removeAttribute('srcset');if(pick.a)img.alt=pick.a}else tryNext()};pre.onerror=tryNext;pre.src=src})()})});
  // Honour Board: Year | Men's Singles | Ladies' Singles
  var hb=document.querySelector('#honour-board table.hbt tbody');
  if(hb)load('Honour Board','dtcHonour',function(rs){rs=rs.filter(function(c){return cell(c[0])});if(!rs.length)return;
