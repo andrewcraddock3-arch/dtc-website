@@ -217,7 +217,7 @@ iframe.trols{width:100%;height:520px;min-height:0;border:0;border-radius:0;displ
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="banner" id="banner" role="region" aria-label="Announcement"><div class="wrap" style="justify-content:center"><p><span class="bnew">NEW</span> 📣 <b>AGM</b> – Monday 26 Oct, 7:30 pm in the clubhouse <a class="bmore" href="https://play.tennis.com.au/doncastertennisclub/Members" target="_blank" rel="noopener">Details →</a></p></div></div>
+<div class="banner" id="banner" role="region" aria-label="Announcement" hidden><div class="wrap" style="justify-content:center"><p></p></div></div>
 <header><div class="wrap nav">
  <a class="brand" href="#top"><img src="logo.png" alt="Doncaster Tennis Club logo"><span>Doncaster Tennis Club<small>Est. 1921 · Doncaster, VIC</small></span></a>
  <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
@@ -436,7 +436,7 @@ t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('ari
  var sp=document.getElementById('seniors');
  if(sp&&sp.querySelector('.yr'))load('Senior Club Champs','dtcSeniors',function(rs){rs=rs.filter(function(c){return cell(c[0])&&cell(c[1])});if(!rs.length)return;var h='';
   group(rs,function(c){return cell(c[0])}).forEach(function(y){h+='<div class="yr"><h2 class="yh">Club Championships '+esc(y[0])+' results</h2>'+table(['Event','Winner(s)','Runner(s)-up'],y[1].map(function(c){return [cell(c[1]),cell(c[2]),cell(c[3])]}),'rt st')+'</div>'});
-  [].forEach.call(sp.querySelectorAll(':scope > .yr'),function(e){e.remove()});sp.insertAdjacentHTML('beforeend',h)});
+  [].forEach.call(sp.querySelectorAll(':scope > .yr'),function(e){e.remove()});sp.insertAdjacentHTML('beforeend',h);var sl=sp.querySelector(':scope > .slides'),y1=sp.querySelector(':scope > .yr');if(sl&&y1)y1.after(sl)});
  // Court Hire: Order | Show | Who | Day | Night
  var hf=document.getElementById('hire-fees');
  if(hf)load('Court Hire','dtcHire',function(rs){
