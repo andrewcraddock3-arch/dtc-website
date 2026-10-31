@@ -407,12 +407,13 @@ t.onclick=function(e){e.stopPropagation();p.hidden=!p.hidden;t.setAttribute('ari
   var L=rs.map(function(c,i){return {c:c,i:i,o:parseFloat(cell(c[0]))}}).filter(function(x){return yes(cell(x.c[1]))&&(cell(x.c[3])||cell(x.c[4]))});
   if(!L.length)return;
   L.sort(function(a,b){var ao=isNaN(a.o)?1e9:a.o,bo=isNaN(b.o)?1e9:b.o;return ao-bo||a.i-b.i});
-  var h=['',''];L.forEach(function(x){var c=x.c,t='<div class="cc"><span class="cr">'+esc(cell(c[3]))+'</span><b>'+esc(cell(c[4]))+'</b>';
+  var h=['','','','',''];L.forEach(function(x){var c=x.c,t='<div class="cc"><span class="cr">'+esc(cell(c[3]))+'</span><b>'+esc(cell(c[4]))+'</b>';
    var ph=cell(c[5]),d=ph.replace(/[^\d+]/g,'');if(d){if(d.charAt(0)==='0')d='+61'+d.slice(1);t+='<a href="'+esc(safe('tel:'+d))+'">'+esc(ph)+'</a>'}
    var em=cell(c[6]);if(/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(em))t+='<a href="'+esc('mailto:'+em)+'">'+esc(em)+'</a>';
    var w=cell(c[7]);if(w&&!/^[a-z]+:/i.test(w))w='https://'+w;if(w&&/^https?:\/\//i.test(w))t+='<a href="'+esc(w)+'" target="_blank" rel="noopener">'+esc(w.replace(/^https?:\/\/(www\.)?/i,'').replace(/\/$/,''))+'</a>';
-   h[cell(c[2])==='1'?0:1]+=t+'</div>'});
-  cg[0].innerHTML=h[0];cg[1].innerHTML=h[1];cg[0].hidden=!h[0];cg[1].hidden=!h[1]});
+   var r=parseInt(cell(c[2]),10);if(!(r>=1&&r<=5))r=2;h[r-1]+=t+'</div>'});
+  var par=cg[0].parentNode;while(cg.length<5){var g=document.createElement('div');g.className='cgrid';g.style.marginTop='14px';par.appendChild(g);cg=par.querySelectorAll('.cgrid')}
+  for(var k=0;k<5;k++){cg[k].innerHTML=h[k];cg[k].hidden=!h[k]}});
  // Events: Show | Date | Badge top | Badge bottom | Title | Details
  var evh=document.querySelector('#events .two > div');
  if(evh&&evh.querySelector('.ev'))load('Events','dtcEvents',function(rs){var now=today(),M='Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' '),h='';
