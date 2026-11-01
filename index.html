@@ -203,7 +203,14 @@ iframe.trols{width:100%;height:520px;min-height:0;border:0;border-radius:0;displ
 .board h2{margin:4px 0 2px;color:var(--g)}.board .bs{margin:0 0 14px;font-style:italic;color:var(--m)}.board table{text-align:left}.board .rt{min-width:0}.hb td.w{color:inherit;font-weight:500}
 .slides{max-width:860px;margin:30px auto 0;aspect-ratio:16/9.6}.slides iframe{min-height:0;height:100%;border-radius:14px}
 .note{font-size:.88rem;color:var(--m)}
-.rteaser{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.rteaser{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:1100px){.rteaser{grid-template-columns:repeat(2,1fr)}}
+.utr{margin-top:28px;background:var(--card,#fff);border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.06);padding:28px;display:grid;grid-template-columns:1fr 220px;gap:28px;align-items:center;border-top:4px solid var(--gold,#f2c94c)}
+.utr h2{margin:6px 0 10px;color:var(--green,#1f5c36)}.utr h3{margin:16px 0 6px;font-size:1.05rem}.utr p{margin:0 0 10px;line-height:1.6}
+.utr-btn{display:inline-block;margin-top:8px}.utr-scale{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;text-align:center}
+.utr-n{font-weight:800;font-size:1.4rem;color:var(--green,#1f5c36)}.utr-bar{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--gold,#f2c94c),var(--green,#1f5c36))}.utr-scale small{grid-column:1/-1;opacity:.75}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:700px){.utr{grid-template-columns:1fr;padding:20px}.utr-scale{order:-1}}
 .wof-era{scroll-margin-top:90px;margin-top:30px}.wof-h{font-size:1.15rem;margin:0 0 12px;padding-bottom:6px;border-bottom:3px solid var(--y);color:var(--g)}
 .wof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
 .wof-card{margin:0;background:#fff;border:1px solid #e3eae2;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(0,0,0,.04)}
@@ -321,6 +328,7 @@ iframe.trols{width:100%;height:520px;min-height:0;border:0;border-radius:0;displ
   <a class="rcard rv" href="results.html#seniors"><span class="tag">Seniors</span><h3>Club Championships</h3><p>Event results for 2026 and 2025.</p><span class="more">View results →</span></a>
   <a class="rcard rv" href="results.html#juniors"><span class="tag">Juniors</span><h3>Junior Club Championships</h3><p>Results by year, boys and girls.</p><span class="more">View results →</span></a>
   <a class="rcard rv" href="wall-of-fame.html"><span class="tag">Premiers</span><h3>Wall of Fame</h3><p>Our premiership teams, from the 1970s to today.</p><span class="more">View Wall of Fame →</span></a>
+  <a class="rcard rv" href="courts.html#utr"><span class="tag">Ratings</span><h3>UTR</h3><p>What your Universal Tennis Rating means and how competition helps.</p><span class="more">Learn about UTR →</span></a>
  </div>
 </div></section>
 
